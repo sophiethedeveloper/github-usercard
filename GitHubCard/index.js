@@ -4,6 +4,29 @@
     https://api.github.com/users/<your name>
 */
 
+import axios from 'axios';
+
+//Parent Element to append children to the DOM
+const cards = document.querySelector(".cards");
+
+axios.get('https://api.github.com/users/sophiethedeveloper')
+.then(response => {
+  //console log to study the information returned by the api
+  console.log('API RESPONSE', response)
+
+  //pass information received and apend to the DOM
+  cards.appendChild(githubComponent(response.data));
+})
+
+// when a GET request is rejected, a .catch on the chain allows us to capture errors returned from the API
+.catch(err => {
+  console.log('something happened! ', err)
+})
+
+// a final .then will be called regardless of state (fulfilled or rejected). it will be called after either the .then or the .catch.
+.then(() => {
+  console.log('yahoo!')
+})
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
     github info! You will need to understand the structure of this
@@ -28,7 +51,27 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  'https://api.github.com/users/tetondan',
+  'https://api.github.com/users/dustinmyers',
+  'https://api.github.com/users/justsml',
+  'https://api.github.com/users/bigknell'
+];
+
+followersArray.forEach(url => {
+  axios.get(url).then(response => {
+    //console log to study the information returned by the api
+    console.log('API RESPONSE', response)
+  
+    //pass information received and apend to the DOM
+    cards.appendChild(githubComponent(response.data));
+  })
+  
+  // when a GET request is rejected, a .catch on the chain allows us to capture errors returned from the API
+  .catch(err => {
+    console.log('something happened! ', err)
+  })
+})
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -58,3 +101,55 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+const githubComponent = (githubCard) => {
+  
+  // 1- create elements
+  const newCard = document.createElement('div');
+  const newImage = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const userFullName = document.createElement('h3');
+  const githubUsername = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const profileUrl = document.createElement('a');
+  const link = document.createTextNode('Visit my Github Profile')
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+   // 2 - Add Content to Elements
+   newImage.src = (`${githubCard.avatar_url}`);
+   userFullName.textContent = (`Name: ${githubCard.name}`);
+   githubUsername.textContent = (`${githubCard.login}`);
+   location.textContent = (`Location: ${githubCard.location}`);
+   profile.textContent = 'Profile: '
+   profileUrl.title = "Visit My Github Profile";
+   profileUrl.href = (`${githubCard.html_url}`)
+   followers.textContent = (`Followers: ${githubCard.followers}`);
+   following.textContent = (`Following: ${githubCard.following}`);
+   bio.textContent = (`Bio: ${githubCard.bio}`);
+  
+  // 3- Append children to parent elements
+  newCard.appendChild(newImage);
+  newCard.appendChild(cardInfo);
+  cardInfo.appendChild(userFullName);
+  cardInfo.appendChild(githubUsername);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
+  profile.append(profileUrl);
+  profileUrl.appendChild(link);
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+  cardInfo.appendChild(bio);
+
+  // 3 - Add Classes to the Elements
+  newCard.classList.add('card');
+  cardInfo.classList.add('card-info');
+  userFullName.classList.add('name');
+  githubUsername.classList.add('username');
+
+
+  // return parent component
+  return newCard
+}
