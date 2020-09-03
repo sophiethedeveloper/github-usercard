@@ -51,7 +51,27 @@ axios.get('https://api.github.com/users/sophiethedeveloper')
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  'https://api.github.com/users/tetondan',
+  'https://api.github.com/users/dustinmyers',
+  'https://api.github.com/users/justsml',
+  'https://api.github.com/users/bigknell'
+];
+
+followersArray.forEach(url => {
+  axios.get(url).then(response => {
+    //console log to study the information returned by the api
+    console.log('API RESPONSE', response)
+  
+    //pass information received and apend to the DOM
+    cards.appendChild(githubComponent(response.data));
+  })
+  
+  // when a GET request is rejected, a .catch on the chain allows us to capture errors returned from the API
+  .catch(err => {
+    console.log('something happened! ', err)
+  })
+})
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
